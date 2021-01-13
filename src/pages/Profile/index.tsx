@@ -31,32 +31,35 @@ const Profile: React.FC = () => {
 
   const { user, updateUser } = useAuth();
 
-  const handleAvatarChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      const data = new FormData();
+  const handleAvatarChange = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      if (e.target.files) {
+        const data = new FormData();
 
-      data.append('avatar', e.target.files[0]);
+        data.append('avatar', e.target.files[0]);
 
-      api
-        .patch('/users/avatar', data)
-        .then(response => {
-          updateUser(response.data);
+        api
+          .patch('/users/avatar', data)
+          .then(response => {
+            updateUser(response.data);
 
-          addToast({
-            type: 'success',
-            title: 'Avatar atualizado',
+            addToast({
+              type: 'success',
+              title: 'Avatar atualizado',
+            });
+          })
+          .catch(() => {
+            addToast({
+              type: 'error',
+              title: 'Erro ao atualizar avatar',
+              description:
+                'Ocorreu um erro ao tentar atualizar avatar, tente novamente',
+            });
           });
-        })
-        .catch(() => {
-          addToast({
-            type: 'error',
-            title: 'Erro ao atualizar avatar',
-            description:
-              'Ocorreu um erro ao tentar atualizar avatar, tente novamente',
-          });
-        });
-    }
-  }, []);
+      }
+    },
+    [addToast, updateUser],
+  );
 
   const handleSubmit = useCallback(
     async (data: ProfileFormData) => {
